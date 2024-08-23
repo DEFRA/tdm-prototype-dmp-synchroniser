@@ -1,8 +1,8 @@
-﻿using Backend.Api.Data;
-using Backend.Api.Models;
+﻿using TdmPrototypeDmpSynchroniser.Data;
+using TdmPrototypeDmpSynchroniser.Models;
 using MongoDB.Driver;
 
-namespace Backend.Api.Services;
+namespace TdmPrototypeDmpSynchroniser.Services;
 
 public class BookService : MongoService<Book>, IBookService
 {

@@ -27,6 +27,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Backend.Api\Backend.Api.csproj"/>
+    <ProjectReference Include="..\TdmPrototypeDmpSynchroniser\TdmPrototypeDmpSynchroniser.csproj"/>
   </ItemGroup>
 </Project>

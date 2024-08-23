@@ -3,7 +3,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using Serilog.Core;
 
-namespace Backend.Api.Utils;
+namespace TdmPrototypeDmpSynchroniser.Utils;
 
 public static class TrustStore
 {

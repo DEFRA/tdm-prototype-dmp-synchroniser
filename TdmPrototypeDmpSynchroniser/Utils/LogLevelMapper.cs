@@ -1,7 +1,7 @@
 using Serilog.Core;
 using Serilog.Events;
 
-namespace Backend.Api.Utils;
+namespace TdmPrototypeDmpSynchroniser.Utils;
 
 
 /**

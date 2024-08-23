@@ -1,8 +1,8 @@
-using Backend.Api.Models;
-using Backend.Api.Validators;
+using TdmPrototypeDmpSynchroniser.Models;
+using TdmPrototypeDmpSynchroniser.Validators;
 using MongoDB.Bson;
 
-namespace Backend.Api.Test;
+namespace TdmPrototypeDmpSynchroniser.Test;
 
 using FluentValidation.TestHelper;
 

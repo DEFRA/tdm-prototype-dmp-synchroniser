@@ -1,6 +1,6 @@
-﻿using Backend.Api.Models;
+﻿using TdmPrototypeDmpSynchroniser.Models;
 
-namespace Backend.Api.Services;
+namespace TdmPrototypeDmpSynchroniser.Services;
 
 public interface IBookService
 {

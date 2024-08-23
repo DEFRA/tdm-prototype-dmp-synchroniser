@@ -1,4 +1,4 @@
-namespace Backend.Api.Config;
+namespace TdmPrototypeDmpSynchroniser.Config;
 
 public static class Swagger
 {
