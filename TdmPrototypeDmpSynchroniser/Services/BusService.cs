@@ -11,8 +11,6 @@ public class BusService(ILoggerFactory loggerFactory, EnvironmentVariables envir
 {
     public async Task<Status> CheckBusASync()
     {
-        //https://learn.microsoft.com/en-us/azure/service-bus-messaging/service-bus-dotnet-how-to-use-topics-subscriptions?tabs=passwordless
-
         Logger.LogInformation("Connecting to bus {0} : {1}/{2}", environmentVariables.DmpBusNamespace,
             environmentVariables.DmpBusTopic, environmentVariables.DmpBusSubscription);
 

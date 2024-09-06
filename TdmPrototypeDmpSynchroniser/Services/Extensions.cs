@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
 
 namespace TdmPrototypeDmpSynchroniser.Services;
 
@@ -16,5 +17,10 @@ static class Extensions
         if(nullableReference == null) {
             throw new ArgumentNullException();
         }
+    }
+
+    internal static string ToJson(this object obj)
+    {
+        return JsonSerializer.Serialize(obj);
     }
 }

@@ -38,6 +38,8 @@ builder.Services.AddSingleton<EnvironmentVariables, EnvironmentVariables>();
 builder.Services.AddSingleton<IBlobService, BlobService>();
 builder.Services.AddSingleton<IBusService, BusService>();
 builder.Services.AddSingleton<IWebService, WebService>();
+builder.Services.AddSingleton<ISyncService, SyncService>();
+builder.Services.AddSingleton<IDmpApiService, DmpApiService>();
 
 // health checks
 builder.Services.AddHealthChecks();
@@ -64,6 +66,7 @@ if (builder.IsSwaggerEnabled())
 
 app.UseRouting();
 app.UseDiagnosticEndpoints();
+app.UseSyncEndpoints();
 app.MapHealthChecks("/health");
 
 app.Run();

@@ -2,14 +2,12 @@
 using TdmPrototypeDmpSynchroniser.Services;
 using FluentValidation;
 using FluentValidation.Results;
-using MongoDB.Bson;
+// using MongoDB.Bson;
 
 namespace TdmPrototypeDmpSynchroniser.Endpoints;
 
 public static class DiagnosticEndpoints
 {
-    private const string ContentType = "application/json";
-    private const string Tag = "Books";
     private const string BaseRoute = "diagnostics";
 
     public static void UseDiagnosticEndpoints(this IEndpointRouteBuilder app)
@@ -22,7 +20,6 @@ public static class DiagnosticEndpoints
     private static async Task<IResult> GetBusDiagnosticAsync(
         IBusService service, string? searchTerm)
     {
-        Console.WriteLine("GetBusDiagnosticAsync");
         var result = await service.CheckBusASync();
         Console.WriteLine(result.ToJson());
         if (result.Success)
@@ -35,8 +32,7 @@ public static class DiagnosticEndpoints
     private static async Task<IResult> GetBlobDiagnosticAsync(
         IBlobService service, string? searchTerm)
     {
-        Console.WriteLine("GetBlobDiagnosticAsync");
-        var result = await service.CheckBlobASync();
+        var result = await service.CheckBlobAsync();
         Console.WriteLine(result.ToJson());
         if (result.Success)
         {
@@ -49,7 +45,6 @@ public static class DiagnosticEndpoints
     private static async Task<IResult> GetTradeApiDiagnosticAsync(
         IWebService service, string? searchTerm)
     {
-        Console.WriteLine("GetTradeApiDiagnosticAsync");
         var result = await service.CheckTradeApiAsync();
         Console.WriteLine(result.ToJson());
         if (result.Success)

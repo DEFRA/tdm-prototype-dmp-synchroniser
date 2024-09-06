@@ -9,22 +9,22 @@ namespace TdmPrototypeDmpSynchroniser.Services;
 public class BlobService(ILoggerFactory loggerFactory, EnvironmentVariables environmentVariables)
     : AzureService(loggerFactory, environmentVariables), IBlobService
 {
-    public async Task<Status> CheckBlobASync()
+    private BlobContainerClient CreateBlobClient()
     {
-        // https://learn.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-dotnet?tabs=visual-studio%2Cmanaged-identity%2Croles-azure-portal%2Csign-in-azure-cli%2Cidentity-visual-studio&pivots=blob-storage-quickstart-scratch
+        
+        var blobServiceClient = new BlobServiceClient(
+            new Uri(environmentVariables.DmpBlobUri),
+            Credentials);
 
+        return blobServiceClient.GetBlobContainerClient(environmentVariables.DmpBlobContainer);
+    }
+    public async Task<Status> CheckBlobAsync()
+    {
         Logger.LogInformation("Connecting to blob storage {0} : {1}", environmentVariables.DmpBlobUri,
             environmentVariables.DmpBlobContainer);
         try
         {
-
-            var blobServiceClient = new BlobServiceClient(
-                new Uri(environmentVariables.DmpBlobUri),
-                Credentials);
-
-            // Create the container and return a container client object
-            BlobContainerClient containerClient =
-                blobServiceClient.GetBlobContainerClient(environmentVariables.DmpBlobContainer);
+            var containerClient = CreateBlobClient();
 
             Logger.LogInformation("Getting blob folders...");
             var folders = containerClient.GetBlobsByHierarchyAsync(prefix: "RAW/", delimiter: "/");
@@ -45,6 +45,45 @@ public class BlobService(ILoggerFactory loggerFactory, EnvironmentVariables envi
         {
             Logger.LogError(ex.ToString());
             return new Status() { Success = false, Description = ex.Message };
+        }
+
+    }
+
+    public async Task<IEnumerable<BlobItem>> GetResourcesAsync(string prefix)
+    {
+        Logger.LogInformation("Connecting to blob storage {0} : {1}", environmentVariables.DmpBlobUri,
+            environmentVariables.DmpBlobContainer);
+        try
+        {
+            var containerClient = CreateBlobClient();
+
+            Logger.LogInformation("Getting blob files from {0}...", prefix);
+            var itemCount = 0;
+            // var folders = containerClient.GetBlobsByHierarchyAsync(prefix: prefix, delimiter: "/");
+            //
+            // await foreach (BlobHierarchyItem blobItem in folders)
+            // {
+            //     Console.WriteLine("\t" + blobItem.Prefix);
+            //     itemCount++;
+            // }
+
+            var files = containerClient.GetBlobsAsync(prefix: prefix);
+            var output = new List<BlobItem>();
+            
+            await foreach (BlobItem item in files)
+            {
+                Console.WriteLine("\t" + item.Name);
+                itemCount++;
+                output.Add(item);
+            }
+
+            return output;
+            // return new Status() { Success = true, Description = String.Format("Done. {0} items synchronised", itemCount) };
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex.ToString());
+            throw;
         }
 
     }

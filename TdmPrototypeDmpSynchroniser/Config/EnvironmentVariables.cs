@@ -8,6 +8,8 @@ public class EnvironmentVariables
     public string DmpBlobUri { get; set; } = default!;
     public string DmpBlobContainer { get; set; } = default!;
     public string? TradeApiGatewayUri { get; set; } = default!;
+    
+    public string? TdmBackendApiUri { get; set; } = default!;
     public string? AzureClientId { get; set; } = default!;
     
     public EnvironmentVariables()
@@ -17,6 +19,7 @@ public class EnvironmentVariables
         
         AzureClientId = System.Environment.GetEnvironmentVariable("AZURE_CLIENT_ID");
         TradeApiGatewayUri = System.Environment.GetEnvironmentVariable("TRADE_API_GATEWAY_URI");
+        TdmBackendApiUri = System.Environment.GetEnvironmentVariable("TDM_BACKEND_API_URI");
         
         DmpBusNamespace = String.Format("{0}.servicebus.windows.net", System.Environment.GetEnvironmentVariable("DMP_SERVICE_BUS_NAME")!);
         DmpBusTopic = String.Format("defra.trade.dmp.ingestipaffs.{0}.{1}.topic", dmpEnvironment, dmpSlot);
