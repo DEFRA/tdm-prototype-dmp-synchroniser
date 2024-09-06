@@ -10,6 +10,6 @@ namespace TdmPrototypeDmpSynchroniser.Services;
 
 public interface IBusService
 {
-    public Status CheckBusASync();
+    public Task<Status> CheckBusASync();
     
 }

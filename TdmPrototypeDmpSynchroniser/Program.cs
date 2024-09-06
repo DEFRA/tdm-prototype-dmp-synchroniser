@@ -34,6 +34,7 @@ builder.Services.AddSingleton<IMongoDbClientFactory>(_ =>
         builder.Configuration.GetValue<string>("Mongo:DatabaseName")!));
 
 // our services
+builder.Services.AddSingleton<EnvironmentVariables, EnvironmentVariables>();
 builder.Services.AddSingleton<IBlobService, BlobService>();
 builder.Services.AddSingleton<IBusService, BusService>();
 

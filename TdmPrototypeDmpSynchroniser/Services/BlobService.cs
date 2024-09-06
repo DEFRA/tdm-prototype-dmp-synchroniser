@@ -1,29 +1,27 @@
 ﻿using Azure.Identity;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using TdmPrototypeDmpSynchroniser.Config;
 using TdmPrototypeDmpSynchroniser.Models;
 
 namespace TdmPrototypeDmpSynchroniser.Services;
 
-public class BlobService(ILoggerFactory loggerFactory) : ApiService(loggerFactory), IBlobService
+public class BlobService(ILoggerFactory loggerFactory, EnvironmentVariables environmentVariables) : ApiService(loggerFactory), IBlobService
 {   
     public async Task<Status> CheckBlobASync()
     {
         // https://learn.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-dotnet?tabs=visual-studio%2Cmanaged-identity%2Croles-azure-portal%2Csign-in-azure-cli%2Cidentity-visual-studio&pivots=blob-storage-quickstart-scratch
-        // TODO: Replace <storage-account-name> with your actual storage account name
-        var blobUrl = Environment.GetEnvironmentVariable("DMP_BLOB_STORAGE_URL")!;
-        var blobContainer = Environment.GetEnvironmentVariable("DMP_BLOB_STORAGE_CONTAINER")!;
         
-        Console.WriteLine("Connecting to {0} : {1}", blobUrl, blobContainer);
+        Console.WriteLine("Connecting to blob storage {0} : {1}", environmentVariables.DmpBlobUri, environmentVariables.DmpBlobContainer);
         try
         {
             
             var blobServiceClient = new BlobServiceClient(
-                new Uri("https://" + blobUrl),
+                new Uri(environmentVariables.DmpBlobUri),
                 new DefaultAzureCredential());
         
             // Create the container and return a container client object
-            BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(blobContainer);
+            BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(environmentVariables.DmpBlobContainer);
             
             Console.WriteLine("Getting blob folders...");
             var folders = containerClient.GetBlobsByHierarchyAsync(prefix: "RAW/", delimiter: "/");

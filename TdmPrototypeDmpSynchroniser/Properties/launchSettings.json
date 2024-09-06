@@ -15,9 +15,12 @@
       "applicationUrl": "https://localhost:7094;http://localhost:5026",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "DMP_SERVICE_BUS_URL": "DEVTREINFSB1001.servicebus.windows.net",
-        "DMP_BLOB_STORAGE_URL": "devdmpinfdl1001.blob.core.windows.net",
-        "DMP_BLOB_STORAGE_CONTAINER": "dmp-data-1014"
+        "DMP_ENVIRONMENT": "dev",
+        "DMP_SLOT": "1014",
+        "DMP_SERVICE_BUS_NAME": "DEVTREINFSB1001",
+        "DMP_SERVICE_BUS_TOPIC": "defra.trade.dmp.ingestipaffs.dev.{0}.topic",
+        "DMP_BLOB_STORAGE_NAME": "devdmpinfdl1001",
+        "DMP_BLOB_STORAGE_CONTAINER": "dmp-data-{1}"
       }
     },
     "IIS Express": {

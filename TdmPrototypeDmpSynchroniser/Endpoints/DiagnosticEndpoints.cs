@@ -22,7 +22,7 @@ public static class DiagnosticEndpoints
         IBusService service, string? searchTerm)
     {
         Console.WriteLine("GetBusDiagnosticAsync");
-        var result = service.CheckBusASync();
+        var result = await service.CheckBusASync();
         Console.WriteLine(result.ToJson());
         if (result.Success)
         {
