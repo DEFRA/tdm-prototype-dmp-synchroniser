@@ -29,11 +29,15 @@ public class BusService(ILoggerFactory loggerFactory, EnvironmentVariables envir
     {
         //https://learn.microsoft.com/en-us/azure/service-bus-messaging/service-bus-dotnet-how-to-use-topics-subscriptions?tabs=passwordless
         
-        Console.WriteLine("Connecting to bus {0} : {1}/{2}", environmentVariables.DmpBusNamespace, environmentVariables.DmpBusTopic, environmentVariables.DmpBusSubscription);
+        Logger.LogInformation("Connecting to bus {0} : {1}/{2}", environmentVariables.DmpBusNamespace, environmentVariables.DmpBusTopic, environmentVariables.DmpBusSubscription);
 
         var clientOptions = new ServiceBusClientOptions()
         {
-            TransportType = ServiceBusTransportType.AmqpWebSockets
+            TransportType = ServiceBusTransportType.AmqpWebSockets,
+            RetryOptions = new ServiceBusRetryOptions
+            {
+                TryTimeout = TimeSpan.FromSeconds(10)  // This is the default value
+            }
         };
         var client = new ServiceBusClient(
             environmentVariables.DmpBusNamespace,
@@ -50,7 +54,7 @@ public class BusService(ILoggerFactory loggerFactory, EnvironmentVariables envir
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex);
+            Logger.LogError(ex.ToString());
             return new Status() { Success = false, Description = ex.Message };
         }
         finally

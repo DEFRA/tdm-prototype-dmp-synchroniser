@@ -18,9 +18,8 @@
         "DMP_ENVIRONMENT": "dev",
         "DMP_SLOT": "1014",
         "DMP_SERVICE_BUS_NAME": "DEVTREINFSB1001",
-        "DMP_SERVICE_BUS_TOPIC": "defra.trade.dmp.ingestipaffs.dev.{0}.topic",
         "DMP_BLOB_STORAGE_NAME": "devdmpinfdl1001",
-        "DMP_BLOB_STORAGE_CONTAINER": "dmp-data-{1}"
+        "DMP_AZURE_CREDENTIALS": "default"
       }
     },
     "IIS Express": {
