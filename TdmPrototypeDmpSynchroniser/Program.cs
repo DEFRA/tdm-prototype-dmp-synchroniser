@@ -1,10 +1,11 @@
 using TdmPrototypeDmpSynchroniser.Config;
 using TdmPrototypeDmpSynchroniser.Data;
-using TdmPrototypeDmpSynchroniser.Endpoints;
+// using TdmPrototypeDmpSynchroniser.Endpoints;
 using TdmPrototypeDmpSynchroniser.Services;
 using TdmPrototypeDmpSynchroniser.Utils;
 using FluentValidation;
 using Serilog;
+using TdmPrototypeDmpSynchroniser.Endpoints;
 
 //-------- Configure the WebApplication builder------------------//
 
@@ -32,8 +33,9 @@ builder.Services.AddSingleton<IMongoDbClientFactory>(_ =>
     new MongoDbClientFactory(builder.Configuration.GetValue<string>("Mongo:DatabaseUri")!,
         builder.Configuration.GetValue<string>("Mongo:DatabaseName")!));
 
-// our service
-builder.Services.AddSingleton<IBookService, BookService>();
+// our services
+builder.Services.AddSingleton<IBlobService, BlobService>();
+builder.Services.AddSingleton<IBusService, BusService>();
 
 // health checks
 builder.Services.AddHealthChecks();
@@ -59,7 +61,7 @@ if (builder.IsSwaggerEnabled())
 }
 
 app.UseRouting();
-app.UseLibraryEndpoints();
+app.UseDiagnosticEndpoints();
 app.MapHealthChecks("/health");
 
 app.Run();
