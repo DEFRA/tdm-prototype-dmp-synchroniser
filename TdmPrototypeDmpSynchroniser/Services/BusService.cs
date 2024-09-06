@@ -7,50 +7,36 @@ using TdmPrototypeDmpSynchroniser.Models;
 
 namespace TdmPrototypeDmpSynchroniser.Services;
 
-public class BusService(ILoggerFactory loggerFactory, EnvironmentVariables environmentVariables) : ApiService(loggerFactory), IBusService
-{   
-    async Task MessageHandler(ProcessMessageEventArgs args)
-    {
-        string body = args.Message.Body.ToString();
-        Console.WriteLine($"Received: {body} from subscription.");
-
-        // complete the message. messages is deleted from the subscription. 
-        await args.CompleteMessageAsync(args.Message);
-    }
-    
-    // handle any errors when receiving messages
-    Task ErrorHandler(ProcessErrorEventArgs args)
-    {
-        Console.WriteLine(args.Exception.ToString());
-        return Task.CompletedTask;
-    }
-    
+public class BusService(ILoggerFactory loggerFactory, EnvironmentVariables environmentVariables) : AzureService(loggerFactory, environmentVariables), IBusService
+{
     public async Task<Status> CheckBusASync()
     {
         //https://learn.microsoft.com/en-us/azure/service-bus-messaging/service-bus-dotnet-how-to-use-topics-subscriptions?tabs=passwordless
-        
-        Logger.LogInformation("Connecting to bus {0} : {1}/{2}", environmentVariables.DmpBusNamespace, environmentVariables.DmpBusTopic, environmentVariables.DmpBusSubscription);
+
+        Logger.LogInformation("Connecting to bus {0} : {1}/{2}", environmentVariables.DmpBusNamespace,
+            environmentVariables.DmpBusTopic, environmentVariables.DmpBusSubscription);
 
         var clientOptions = new ServiceBusClientOptions()
         {
             TransportType = ServiceBusTransportType.AmqpWebSockets,
-            RetryOptions = new ServiceBusRetryOptions
-            {
-                TryTimeout = TimeSpan.FromSeconds(10)  // This is the default value
-            }
+            RetryOptions = new ServiceBusRetryOptions { TryTimeout = TimeSpan.FromSeconds(10) }
         };
         var client = new ServiceBusClient(
             environmentVariables.DmpBusNamespace,
-            new DefaultAzureCredential(),
+            Credentials,
             clientOptions);
 
-        var processor = client.CreateReceiver(environmentVariables.DmpBusTopic, environmentVariables.DmpBusSubscription);
-    
+        var processor =
+            client.CreateReceiver(environmentVariables.DmpBusTopic, environmentVariables.DmpBusSubscription);
+
         try
         {
             var messages = await processor.PeekMessagesAsync(100);
-            
-            return new Status() { Success = true, Description = String.Format("Connected. {0} bus messages found", messages.Count)  };
+
+            return new Status()
+            {
+                Success = true, Description = String.Format("Connected. {0} bus messages found", messages.Count)
+            };
         }
         catch (Exception ex)
         {
@@ -64,6 +50,6 @@ public class BusService(ILoggerFactory loggerFactory, EnvironmentVariables envir
             await processor.DisposeAsync();
             await client.DisposeAsync();
         }
-        
+
     }
 }

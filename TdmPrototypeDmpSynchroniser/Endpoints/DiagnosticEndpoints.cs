@@ -16,6 +16,7 @@ public static class DiagnosticEndpoints
     {
         app.MapGet(BaseRoute + "/bus", GetBusDiagnosticAsync);
         app.MapGet(BaseRoute + "/blob", GetBlobDiagnosticAsync);
+        app.MapGet(BaseRoute + "/tradeapi", GetTradeApiDiagnosticAsync);
     }
 
     private static async Task<IResult> GetBusDiagnosticAsync(
@@ -36,6 +37,20 @@ public static class DiagnosticEndpoints
     {
         Console.WriteLine("GetBlobDiagnosticAsync");
         var result = await service.CheckBlobASync();
+        Console.WriteLine(result.ToJson());
+        if (result.Success)
+        {
+            return Results.Ok(result);    
+        }
+        return Results.Conflict(result);
+    }
+    
+    
+    private static async Task<IResult> GetTradeApiDiagnosticAsync(
+        IWebService service, string? searchTerm)
+    {
+        Console.WriteLine("GetTradeApiDiagnosticAsync");
+        var result = await service.CheckTradeApiAsync();
         Console.WriteLine(result.ToJson());
         if (result.Success)
         {

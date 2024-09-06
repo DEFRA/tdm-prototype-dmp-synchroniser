@@ -37,6 +37,7 @@ builder.Services.AddSingleton<IMongoDbClientFactory>(_ =>
 builder.Services.AddSingleton<EnvironmentVariables, EnvironmentVariables>();
 builder.Services.AddSingleton<IBlobService, BlobService>();
 builder.Services.AddSingleton<IBusService, BusService>();
+builder.Services.AddSingleton<IWebService, WebService>();
 
 // health checks
 builder.Services.AddHealthChecks();
