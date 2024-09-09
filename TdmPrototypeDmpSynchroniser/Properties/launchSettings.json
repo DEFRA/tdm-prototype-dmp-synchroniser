@@ -20,7 +20,7 @@
         "DMP_SERVICE_BUS_NAME": "DEVTREINFSB1001",
         "DMP_BLOB_STORAGE_NAME": "devdmpinfdl1001",
         "DMP_AZURE_CREDENTIALS": "default",
-        "TRADE_API_GATEWAY_URI":"https://dev-internal-gateway.trade.azure.defra.cloud",
+        "TRADE_API_ENVIRONMENT": "tst",
         "TDM_BACKEND_API_URI": "https://localhost:7094/api/"
       }
     },

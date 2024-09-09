@@ -16,9 +16,14 @@ public class WebService(ILoggerFactory loggerFactory, EnvironmentVariables envir
         return await CheckApiAsync("https://www.google.com");
     }
     
+    public async Task<Status> CheckTradeApiInternalAsync()
+    {
+        return await CheckApiAsync($"https://{environmentVariables.TradeApiEmvironment}-internal-gateway.trade.azure.defra.cloud");
+    }
+    
     public async Task<Status> CheckTradeApiAsync()
     {
-        return await CheckApiAsync("https://dev-internal-gateway.trade.azure.defra.cloud");
+        return await CheckApiAsync($"https://{environmentVariables.TradeApiEmvironment}-gateway.trade.azure.defra.cloud");
     }
     
     private async Task<Status> CheckApiAsync(string uri)
@@ -32,6 +37,7 @@ public class WebService(ILoggerFactory loggerFactory, EnvironmentVariables envir
             // Gets a proxied client when CDP_HTTP_PROXY is set whilst running in CDP
             // https://github.com/DEFRA/cdp-portal-backend/blob/main/Defra.Cdp.Backend.Api/Utils/Proxy.cs#L16
             HttpClient client = clientFactory.CreateClient("proxy");
+            client.Timeout = TimeSpan.FromSeconds(10);
 
             using HttpRequestMessage request = new(
                 HttpMethod.Head, 
