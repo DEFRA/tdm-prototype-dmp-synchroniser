@@ -18,7 +18,7 @@ public class WebService(ILoggerFactory loggerFactory, EnvironmentVariables envir
     
     public async Task<Status> CheckTradeApiAsync()
     {
-        return await CheckApiAsync("https://www.google.com");
+        return await CheckApiAsync("https://dev-internal-gateway.trade.azure.defra.cloud");
     }
     
     private async Task<Status> CheckApiAsync(string uri)
