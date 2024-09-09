@@ -21,7 +21,11 @@
         "DMP_BLOB_STORAGE_NAME": "devdmpinfdl1001",
         "DMP_AZURE_CREDENTIALS": "default",
         "TRADE_API_ENVIRONMENT": "tst",
-        "TDM_BACKEND_API_URI": "https://localhost:7094/api/"
+        "TDM_BACKEND_API_URI": "https://localhost:7094/api/",
+        "AZURE_CLIENT_ID": "00000000-0000-0000-0000-00000000000",
+        "AZURE_CLIENT_SECRET": "00000000-0000-0000-0000-00000000000",
+        "AZURE_TENANT_ID": "c9d74090-b4e6-4b04-981d-e6757a160812"
+        
       }
     },
     "IIS Express": {

@@ -46,7 +46,7 @@ builder.Services.AddHealthChecks();
 
 // http client
 builder.Services.AddHttpClient();
-builder.Services.AddHttpProxyClient(logger);
+builder.Services.AddHttpProxyServices(logger);
 
 // swagger endpoints
 if (builder.IsSwaggerEnabled())

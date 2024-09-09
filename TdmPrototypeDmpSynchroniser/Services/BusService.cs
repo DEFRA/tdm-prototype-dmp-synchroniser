@@ -1,31 +1,38 @@
-﻿using System.Threading.Tasks;
+﻿using System.Net;
+using System.Threading.Tasks;
 using Azure.Identity;
 using Azure.Messaging.ServiceBus;
 
 using TdmPrototypeDmpSynchroniser.Config;
 using TdmPrototypeDmpSynchroniser.Models;
+using TdmPrototypeDmpSynchroniser.Utils;
 
 namespace TdmPrototypeDmpSynchroniser.Services;
 
-public class BusService(ILoggerFactory loggerFactory, EnvironmentVariables environmentVariables) : AzureService(loggerFactory, environmentVariables), IBusService
+public class BusService(
+    ILoggerFactory loggerFactory,
+    EnvironmentVariables environmentVariables,
+    Proxy.IProxyConfig proxyConfig) : AzureService(loggerFactory, environmentVariables), IBusService
 {
-    public async Task<Status> CheckBusASync()
+    public async Task<Status> CheckBusAsync()
     {
-        Logger.LogInformation("Connecting to bus {0} : {1}/{2}", environmentVariables.DmpBusNamespace,
-            environmentVariables.DmpBusTopic, environmentVariables.DmpBusSubscription);
+        Logger.LogInformation(
+            $"Connecting to bus {EnvironmentVariables.DmpBusNamespace} : {EnvironmentVariables.DmpBusTopic}/{EnvironmentVariables.DmpBusSubscription}");
 
         var clientOptions = new ServiceBusClientOptions()
         {
+            WebProxy = proxyConfig.UseProxy ? proxyConfig.Proxy : null,
             TransportType = ServiceBusTransportType.AmqpWebSockets,
             RetryOptions = new ServiceBusRetryOptions { TryTimeout = TimeSpan.FromSeconds(10) }
         };
+        
         var client = new ServiceBusClient(
-            environmentVariables.DmpBusNamespace,
+            EnvironmentVariables.DmpBusNamespace,
             Credentials,
             clientOptions);
 
         var processor =
-            client.CreateReceiver(environmentVariables.DmpBusTopic, environmentVariables.DmpBusSubscription);
+            client.CreateReceiver(EnvironmentVariables.DmpBusTopic, EnvironmentVariables.DmpBusSubscription);
 
         try
         {
