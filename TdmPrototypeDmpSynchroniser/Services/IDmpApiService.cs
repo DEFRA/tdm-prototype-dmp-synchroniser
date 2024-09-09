@@ -6,5 +6,4 @@ namespace TdmPrototypeDmpSynchroniser.Services;
 public interface IDmpApiService
 {
     public void UpsertMovement(Movement movement);
-    
 }

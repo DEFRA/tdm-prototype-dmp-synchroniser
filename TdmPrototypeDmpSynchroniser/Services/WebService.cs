@@ -29,7 +29,8 @@ public class WebService(ILoggerFactory loggerFactory, EnvironmentVariables envir
             
             Logger.LogInformation("Attempting connection to {0}", uri);
             
-            // Gets a proxied client when CDP_HTTP_PROXY is set whilst running in CDP 
+            // Gets a proxied client when CDP_HTTP_PROXY is set whilst running in CDP
+            // https://github.com/DEFRA/cdp-portal-backend/blob/main/Defra.Cdp.Backend.Api/Utils/Proxy.cs#L16
             HttpClient client = clientFactory.CreateClient("proxy");
 
             using HttpRequestMessage request = new(

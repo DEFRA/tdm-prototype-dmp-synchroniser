@@ -25,9 +25,5 @@
     <Folder Include="Validators\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\tdm-prototype-backend\TdmPrototypeBackend.Types\TdmPrototypeBackend.Types.csproj" />
-  </ItemGroup>
-
 
 </Project>
