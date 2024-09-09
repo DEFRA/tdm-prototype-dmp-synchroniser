@@ -14,11 +14,15 @@ public class BlobService(ILoggerFactory loggerFactory, EnvironmentVariables envi
     {
         var options = new BlobClientOptions
         {
-            Transport = Transport,
+            Transport = Transport!,
             Retry =
             {
                 MaxRetries = 1,
-                NetworkTimeout = TimeSpan.FromMinutes(10)
+                NetworkTimeout = TimeSpan.FromSeconds(10)
+            },
+            Diagnostics = 
+            {
+                IsLoggingContentEnabled = true,
             }
         };
         
@@ -27,7 +31,9 @@ public class BlobService(ILoggerFactory loggerFactory, EnvironmentVariables envi
             Credentials,
             options);
 
-        return blobServiceClient.GetBlobContainerClient(EnvironmentVariables.DmpBlobContainer);
+        var containerClient = blobServiceClient.GetBlobContainerClient(EnvironmentVariables.DmpBlobContainer);
+        // containerClient
+        return containerClient;
     }
     public async Task<Status> CheckBlobAsync()
     {

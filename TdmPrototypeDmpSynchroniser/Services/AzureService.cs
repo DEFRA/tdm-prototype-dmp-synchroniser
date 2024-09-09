@@ -1,4 +1,5 @@
-﻿using Amazon.SecurityToken.Model;
+﻿using System.Diagnostics.Tracing;
+using Amazon.SecurityToken.Model;
 using Azure.Core;
 using Azure.Core.Diagnostics;
 using Azure.Core.Pipeline;
@@ -17,7 +18,7 @@ public abstract class AzureService : BaseService
         loggerFactory, environmentVariables)
     {
         
-        using AzureEventSourceListener listener = AzureEventSourceListener.CreateConsoleLogger();
+        using AzureEventSourceListener listener = AzureEventSourceListener.CreateConsoleLogger(EventLevel.Verbose);
 
         if (EnvironmentVariables.AzureClientId != null)
         {

@@ -23,7 +23,14 @@ public class BusService(
         {
             WebProxy = proxyConfig.UseProxy ? proxyConfig.Proxy : null,
             TransportType = ServiceBusTransportType.AmqpWebSockets,
-            RetryOptions = new ServiceBusRetryOptions { TryTimeout = TimeSpan.FromSeconds(10) }
+            RetryOptions = new ServiceBusRetryOptions
+            {
+                TryTimeout = TimeSpan.FromSeconds(10), MaxRetries = 1
+            },
+            // Diagnostics = 
+            // {
+            //     IsLoggingContentEnabled = true,
+            // }
         };
         
         var client = new ServiceBusClient(
