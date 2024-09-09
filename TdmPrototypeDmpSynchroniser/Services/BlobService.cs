@@ -11,10 +11,19 @@ public class BlobService(ILoggerFactory loggerFactory, EnvironmentVariables envi
 {
     private BlobContainerClient CreateBlobClient()
     {
+        var options = new BlobClientOptions
+        {
+            Retry =
+            {
+                MaxRetries = 1,
+                NetworkTimeout = TimeSpan.FromMinutes(10)
+            }
+        };
         
         var blobServiceClient = new BlobServiceClient(
             new Uri(environmentVariables.DmpBlobUri),
-            Credentials);
+            Credentials,
+            options);
 
         return blobServiceClient.GetBlobContainerClient(environmentVariables.DmpBlobContainer);
     }
@@ -25,7 +34,7 @@ public class BlobService(ILoggerFactory loggerFactory, EnvironmentVariables envi
         try
         {
             var containerClient = CreateBlobClient();
-
+            
             Logger.LogInformation("Getting blob folders...");
             var folders = containerClient.GetBlobsByHierarchyAsync(prefix: "RAW/", delimiter: "/");
 

@@ -1,5 +1,6 @@
 ﻿using Amazon.SecurityToken.Model;
 using Azure.Core;
+using Azure.Core.Diagnostics;
 using Azure.Identity;
 using MongoDB.Driver;
 using TdmPrototypeDmpSynchroniser.Config;
@@ -13,8 +14,17 @@ public abstract class AzureService : BaseService
     protected AzureService(ILoggerFactory loggerFactory, EnvironmentVariables environmentVariables) : base(
         loggerFactory, environmentVariables)
     {
-        Credentials = environmentVariables.AzureClientId == null
-            ? new DefaultAzureCredential()
-            : new EnvironmentCredential();
+        using AzureEventSourceListener listener = AzureEventSourceListener.CreateConsoleLogger();
+
+        if (environmentVariables.AzureClientId != null)
+        {
+            Logger.LogInformation($"Creating azure credentials based on env vars for {environmentVariables.AzureClientId}");
+            Credentials = new EnvironmentCredential();
+        }
+        else
+        {
+            Logger.LogInformation($"Creating azure credentials using default creds because AZURE_CLIENT_ID env var not found.");
+            Credentials = new DefaultAzureCredential();
+        }
     }
 }
