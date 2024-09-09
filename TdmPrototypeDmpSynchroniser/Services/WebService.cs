@@ -1,31 +1,40 @@
 ﻿
 
 using System.Diagnostics.CodeAnalysis;
+using System.Net;
 using TdmPrototypeDmpSynchroniser.Config;
 using TdmPrototypeDmpSynchroniser.Models;
 
 namespace TdmPrototypeDmpSynchroniser.Services;
 
-public class WebService(ILoggerFactory loggerFactory, EnvironmentVariables environmentVariables)
+public class WebService(ILoggerFactory loggerFactory, EnvironmentVariables environmentVariables, IHttpClientFactory clientFactory)
     : BaseService(loggerFactory, environmentVariables), IWebService
 {
+
+    public async Task<Status> CheckGoogleAsync()
+    {
+        return await CheckApiAsync("https://www.google.com");
+    }
     
     public async Task<Status> CheckTradeApiAsync()
     {
+        return await CheckApiAsync("https://www.google.com");
+    }
+    
+    private async Task<Status> CheckApiAsync(string uri)
+    {
         try
         {
-            Extensions.AssertIsNotNull(environmentVariables.TradeApiGatewayUri);
+            Extensions.AssertIsNotNull(uri);
             
-            Logger.LogInformation("Attempting connection to {0}", environmentVariables.TradeApiGatewayUri);
-            HttpClient client = new()
-            {
-                BaseAddress = new Uri(environmentVariables.TradeApiGatewayUri),
-                Timeout = TimeSpan.FromSeconds(10),
-            };
+            Logger.LogInformation("Attempting connection to {0}", uri);
             
+            // Gets a proxied client when CDP_HTTP_PROXY is set whilst running in CDP 
+            HttpClient client = clientFactory.CreateClient("proxy");
+
             using HttpRequestMessage request = new(
                 HttpMethod.Head, 
-                environmentVariables.TradeApiGatewayUri);
+                uri);
 
             using HttpResponseMessage response = await client.SendAsync(request);
 

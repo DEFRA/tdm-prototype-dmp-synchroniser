@@ -8,7 +8,6 @@ public class EnvironmentVariables
     public string DmpBlobUri { get; set; } = default!;
     public string DmpBlobContainer { get; set; } = default!;
     public string? TradeApiGatewayUri { get; set; } = default!;
-    
     public string? TdmBackendApiUri { get; set; } = default!;
     public string? AzureClientId { get; set; } = default!;
     
