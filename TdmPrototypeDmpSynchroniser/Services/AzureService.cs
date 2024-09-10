@@ -24,11 +24,13 @@ public abstract class AzureService : BaseService
         {
             Logger.LogInformation($"Creating azure credentials based on env vars for {Config.AzureClientId}");
             Credentials = new EnvironmentCredential();
+            Logger.LogInformation($"Created azure credentials");
         }
         else
         {
             Logger.LogInformation($"Creating azure credentials using default creds because AZURE_CLIENT_ID env var not found.");
             Credentials = new DefaultAzureCredential();
+            Logger.LogInformation($"Created azure default credentials");
         }
 
         if (clientFactory != null)
