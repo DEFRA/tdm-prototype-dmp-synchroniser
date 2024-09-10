@@ -10,7 +10,7 @@ namespace TdmPrototypeDmpSynchroniser.Services;
 public class BlobService(ILoggerFactory loggerFactory, SynchroniserConfig config, IHttpClientFactory clientFactory)
     : AzureService(loggerFactory, config, clientFactory), IBlobService
 {
-    private BlobContainerClient CreateBlobClient(int retries = 1, int timeout = 10)
+    private BlobContainerClient CreateBlobClient(string uri, int retries = 1, int timeout = 10)
     {
         var options = new BlobClientOptions
         {
@@ -23,11 +23,12 @@ public class BlobService(ILoggerFactory loggerFactory, SynchroniserConfig config
             Diagnostics = 
             {
                 IsLoggingContentEnabled = true,
+                IsLoggingEnabled = true
             }
         };
         
         var blobServiceClient = new BlobServiceClient(
-            new Uri(Config.DmpBlobUri),
+            new Uri(uri),
             Credentials,
             options);
 
@@ -35,13 +36,19 @@ public class BlobService(ILoggerFactory loggerFactory, SynchroniserConfig config
         
         return containerClient;
     }
+
     public async Task<Status> CheckBlobAsync()
     {
-        Logger.LogInformation("Connecting to blob storage {0} : {1}", Config.DmpBlobUri,
+        return await CheckBlobAsync(Config.DmpBlobUri);
+    }
+    
+    public async Task<Status> CheckBlobAsync(string uri)
+    {
+        Logger.LogInformation("Connecting to blob storage {0} : {1}", uri,
             Config.DmpBlobContainer);
         try
         {
-            var containerClient = CreateBlobClient(0, 5);
+            var containerClient = CreateBlobClient(uri, 0, 5);
             
             Logger.LogInformation("Getting blob folders...");
             var folders = containerClient.GetBlobsByHierarchyAsync(prefix: "RAW/", delimiter: "/");
@@ -72,7 +79,7 @@ public class BlobService(ILoggerFactory loggerFactory, SynchroniserConfig config
             Config.DmpBlobContainer);
         try
         {
-            var containerClient = CreateBlobClient();
+            var containerClient = CreateBlobClient(Config.DmpBlobUri);
 
             Logger.LogInformation("Getting blob files from {0}...", prefix);
             var itemCount = 0;
@@ -103,7 +110,7 @@ public class BlobService(ILoggerFactory loggerFactory, SynchroniserConfig config
             $"Downloading blob {path} from blob storage {Config.DmpBlobUri} : {Config.DmpBlobContainer}");
         try
         {
-            var containerClient = CreateBlobClient();
+            var containerClient = CreateBlobClient(Config.DmpBlobUri);
 
             var blobClient = containerClient.GetBlobClient(path);
 

@@ -22,8 +22,10 @@ public abstract class AzureService : BaseService
 
         if (Config.AzureClientId != null)
         {
-            Logger.LogInformation($"Creating azure credentials based on env vars for {Config.AzureClientId}");
-            Credentials = new EnvironmentCredential();
+            Logger.LogInformation($"Creating azure credentials based on config vars for {Config.AzureClientId}");
+            Credentials =
+                new ClientSecretCredential(Config.AzureTenantId, Config.AzureClientId, Config.AzureClientSecret);
+            
             Logger.LogInformation($"Created azure credentials");
         }
         else

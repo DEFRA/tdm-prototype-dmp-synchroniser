@@ -19,6 +19,7 @@
         "DMP_SLOT": "1014",
         "DMP_SERVICE_BUS_NAME": "DEVTREINFSB1001",
         "DMP_BLOB_STORAGE_NAME": "devdmpinfdl1001",
+        "DMP_BLOB_PRIVATE_ENDPOINT": "10.205.131.199",
         "TRADE_API_ENVIRONMENT": "tst",
         "TDM_BACKEND_API_URI": "https://localhost:7094/api/",
         "AZURE_CLIENT_ID": "c1d14b98-8baf-486b-99c0-f30ac3ee5464",

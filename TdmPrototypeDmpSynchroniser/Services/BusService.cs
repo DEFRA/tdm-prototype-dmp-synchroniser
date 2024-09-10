@@ -15,58 +15,55 @@ public class BusService(
     Proxy.IProxyConfig proxyConfig) : AzureService(loggerFactory, config), IBusService
 {
 
-    private ServiceBusClient CreateBusClient(int retries = 1, int timeout = 10)
+    private ServiceBusClient CreateBusClient(string uri, int retries = 1, int timeout = 10)
     {
         Logger.LogInformation(
-            $"Connecting to bus {Config.DmpBusNamespace} : {Config.DmpBusTopic}/{Config.DmpBusSubscription}");
+            $"Connecting to bus {uri} : {Config.DmpBusTopic}/{Config.DmpBusSubscription}");
 
         var clientOptions = new ServiceBusClientOptions()
         {
             WebProxy = proxyConfig.UseProxy ? proxyConfig.Proxy : null,
             TransportType = ServiceBusTransportType.AmqpWebSockets,
-            RetryOptions = new ServiceBusRetryOptions
-            {
-                TryTimeout = TimeSpan.FromSeconds(10), MaxRetries = 0
-            },
-            // Diagnostics = 
-            // {
-            //     IsLoggingContentEnabled = true,
-            // }
+            RetryOptions = new ServiceBusRetryOptions { TryTimeout = TimeSpan.FromSeconds(10), MaxRetries = 0 },
         };
-        
+
         return new ServiceBusClient(
-            Config.DmpBusNamespace,
+            uri,
             Credentials,
             clientOptions);
     }
+
     public async Task<Status> CheckBusAsync()
     {
-        var client = CreateBusClient(0, 5);
+        return await CheckBusAsync(Config.DmpBusNamespace);
+    }
 
-        var processor =
-            client.CreateReceiver(Config.DmpBusTopic, Config.DmpBusSubscription);
-
+    public async Task<Status> CheckBusAsync(string uri)
+    {   
         try
         {
-            var messages = await processor.PeekMessagesAsync(100);
+            Extensions.AssertIsNotNull(uri);
 
-            return new Status()
+            await using (var client = CreateBusClient(uri, 0, 5))
             {
-                Success = true, Description = String.Format("Connected. {0} bus messages found", messages.Count)
-            };
+                await using (var processor =
+                             client.CreateReceiver(Config.DmpBusTopic, Config.DmpBusSubscription))
+                {
+                    var messages = await processor.PeekMessagesAsync(100);
+
+                    return new Status()
+                    {
+                        Success = true,
+                        Description = String.Format("Connected. {0} bus messages found", messages.Count)
+                    };
+                }
+            }
+
         }
         catch (Exception ex)
         {
             Logger.LogError(ex.ToString());
             return new Status() { Success = false, Description = ex.Message };
         }
-        finally
-        {
-            // Calling DisposeAsync on client types is required to ensure that network
-            // resources and other unmanaged objects are properly cleaned up.
-            await processor.DisposeAsync();
-            await client.DisposeAsync();
-        }
-
     }
 }

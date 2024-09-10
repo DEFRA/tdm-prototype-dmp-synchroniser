@@ -13,8 +13,6 @@ public static class SyncEndpoints
     public static void UseSyncEndpoints(this IEndpointRouteBuilder app)
     {
         app.MapGet(BaseRoute + "/clearance-requests", SyncClearanceRequestsAsync);
-        // app.MapGet(BaseRoute + "/blob", GetBlobDiagnosticAsync);
-        // app.MapGet(BaseRoute + "/tradeapi", GetTradeApiDiagnosticAsync);
     }
 
     private static async Task<IResult> SyncClearanceRequestsAsync(
