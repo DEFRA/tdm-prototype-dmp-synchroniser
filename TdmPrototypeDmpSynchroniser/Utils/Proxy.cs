@@ -35,9 +35,10 @@ public static class Proxy
         {
             BypassProxyOnLocal = true
         };
+        
         if (proxyUri != null)
         {
-            logger.Debug("Creating proxy http client");
+            logger.Information("Creating proxy http client");
             var uri = new UriBuilder(proxyUri);
 
             var credentials = GetCredentialsFromUri(uri);
@@ -54,7 +55,7 @@ public static class Proxy
         }
         else
         {
-            logger.Warning("CDP_HTTP_PROXY is NOT set, proxy client will be disabled");
+            logger.Warning("CDP_HTTPS_PROXY is NOT set, proxy client will be disabled");
         }
         
         services.AddHttpClient(ProxyClient).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { Proxy = proxy, UseProxy = proxyUri != null });
