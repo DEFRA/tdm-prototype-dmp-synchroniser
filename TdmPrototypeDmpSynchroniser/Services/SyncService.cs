@@ -12,8 +12,8 @@ using TdmPrototypeDmpSynchroniser.Models;
 
 namespace TdmPrototypeDmpSynchroniser.Services;
 
-public class SyncService(ILoggerFactory loggerFactory, EnvironmentVariables environmentVariables, IBlobService blobService, IDmpApiService dmpService)
-    : BaseService(loggerFactory, environmentVariables), ISyncService
+public class SyncService(ILoggerFactory loggerFactory, SynchroniserConfig config, IBlobService blobService, IDmpApiService dmpService)
+    : BaseService(loggerFactory, config), ISyncService
 {
     
     public async Task<Status> SyncMovements()

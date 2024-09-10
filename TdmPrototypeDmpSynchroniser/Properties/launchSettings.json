@@ -12,20 +12,17 @@
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": false,
-      "applicationUrl": "https://localhost:7094;http://localhost:5026",
+      "applicationUrl": "https://localhost:7095",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "DMP_ENVIRONMENT": "dev",
         "DMP_SLOT": "1014",
         "DMP_SERVICE_BUS_NAME": "DEVTREINFSB1001",
         "DMP_BLOB_STORAGE_NAME": "devdmpinfdl1001",
-        "DMP_AZURE_CREDENTIALS": "default",
         "TRADE_API_ENVIRONMENT": "tst",
         "TDM_BACKEND_API_URI": "https://localhost:7094/api/",
-        "AZURE_CLIENT_ID": "00000000-0000-0000-0000-00000000000",
-        "AZURE_CLIENT_SECRET": "00000000-0000-0000-0000-00000000000",
+        "AZURE_CLIENT_ID": "c1d14b98-8baf-486b-99c0-f30ac3ee5464",
         "AZURE_TENANT_ID": "c9d74090-b4e6-4b04-981d-e6757a160812"
-        
       }
     },
     "IIS Express": {

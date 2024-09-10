@@ -9,11 +9,11 @@ namespace TdmPrototypeDmpSynchroniser.Services;
 public abstract class BaseService
 {
     protected readonly ILogger Logger;
-    protected readonly EnvironmentVariables EnvironmentVariables;
+    protected readonly SynchroniserConfig Config;
 
-    protected BaseService(ILoggerFactory loggerFactory, EnvironmentVariables environmentVariables)
+    protected BaseService(ILoggerFactory loggerFactory, SynchroniserConfig config)
     {
-        EnvironmentVariables = environmentVariables;
+        Config = config;
         
         var loggerName = GetType().FullName ?? GetType().Name;
         Logger = loggerFactory.CreateLogger(loggerName);

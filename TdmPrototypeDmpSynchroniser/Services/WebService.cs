@@ -7,8 +7,8 @@ using TdmPrototypeDmpSynchroniser.Models;
 
 namespace TdmPrototypeDmpSynchroniser.Services;
 
-public class WebService(ILoggerFactory loggerFactory, EnvironmentVariables environmentVariables, IHttpClientFactory clientFactory)
-    : BaseService(loggerFactory, environmentVariables), IWebService
+public class WebService(ILoggerFactory loggerFactory, SynchroniserConfig config, IHttpClientFactory clientFactory)
+    : BaseService(loggerFactory, config), IWebService
 {
 
     public async Task<Status> CheckGoogleAsync()
@@ -18,12 +18,12 @@ public class WebService(ILoggerFactory loggerFactory, EnvironmentVariables envir
     
     public async Task<Status> CheckTradeApiInternalAsync()
     {
-        return await CheckApiAsync($"https://{environmentVariables.TradeApiEmvironment}-internal-gateway.trade.azure.defra.cloud");
+        return await CheckApiAsync($"https://{config.TradeApiEmvironment}-internal-gateway.trade.azure.defra.cloud");
     }
     
     public async Task<Status> CheckTradeApiAsync()
     {
-        return await CheckApiAsync($"https://{environmentVariables.TradeApiEmvironment}-gateway.trade.azure.defra.cloud");
+        return await CheckApiAsync($"https://{config.TradeApiEmvironment}-gateway.trade.azure.defra.cloud");
     }
     
     private async Task<Status> CheckApiAsync(string uri)

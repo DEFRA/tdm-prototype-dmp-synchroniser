@@ -9,9 +9,9 @@ namespace TdmPrototypeDmpSynchroniser.Services;
 
 public class DmpApiService: BaseService, IDmpApiService
 {
-    public DmpApiService(ILoggerFactory loggerFactory, EnvironmentVariables environmentVariables) : base(loggerFactory, environmentVariables)
+    public DmpApiService(ILoggerFactory loggerFactory, SynchroniserConfig config) : base(loggerFactory, config)
     {
-        Logger.LogInformation("Connecting to Dmp API {0}", environmentVariables.TdmBackendApiUri);
+        Logger.LogInformation("Connecting to Dmp API {0}", config.TdmBackendApiUri);
     }
     public async void UpsertMovement(Movement movement)
     {

@@ -14,15 +14,15 @@ public abstract class AzureService : BaseService
     protected readonly TokenCredential Credentials;
     protected readonly HttpClientTransport? Transport;
     
-    protected AzureService(ILoggerFactory loggerFactory, EnvironmentVariables environmentVariables, IHttpClientFactory? clientFactory = null) : base(
-        loggerFactory, environmentVariables)
+    protected AzureService(ILoggerFactory loggerFactory, SynchroniserConfig config, IHttpClientFactory? clientFactory = null) : base(
+        loggerFactory, config)
     {
         
         using AzureEventSourceListener listener = AzureEventSourceListener.CreateConsoleLogger(EventLevel.Verbose);
 
-        if (EnvironmentVariables.AzureClientId != null)
+        if (Config.AzureClientId != null)
         {
-            Logger.LogInformation($"Creating azure credentials based on env vars for {EnvironmentVariables.AzureClientId}");
+            Logger.LogInformation($"Creating azure credentials based on env vars for {Config.AzureClientId}");
             Credentials = new EnvironmentCredential();
         }
         else

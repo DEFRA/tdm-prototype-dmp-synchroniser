@@ -1,6 +1,6 @@
 namespace TdmPrototypeDmpSynchroniser.Config;
 
-public class EnvironmentVariables
+public class SynchroniserConfig
 {
     public string DmpEnvironment { get; set; } = default!;
     public string DmpBusNamespace { get; set; } = default!;
@@ -13,20 +13,22 @@ public class EnvironmentVariables
     public string? TdmBackendApiUri { get; set; } = default!;
     public string? AzureClientId { get; set; } = default!;
     
-    public EnvironmentVariables()
+    // public string? CdsHttpsProxy { get; set; } = default!;
+    
+    public SynchroniserConfig(IConfiguration configuration)
     {
+        // CdsHttpsProxy = configuration["CDP_HTTPS_PROXY"];
+        var dmpSlot = configuration["DMP_SLOT"]!;
         
-        var dmpSlot = System.Environment.GetEnvironmentVariable("DMP_SLOT")!;
-        
-        DmpEnvironment = System.Environment.GetEnvironmentVariable("DMP_ENVIRONMENT")!;
-        AzureClientId = System.Environment.GetEnvironmentVariable("AZURE_CLIENT_ID");
-        TradeApiEmvironment = System.Environment.GetEnvironmentVariable("TRADE_API_ENVIRONMENT");
+        DmpEnvironment = configuration["DMP_ENVIRONMENT"]!;
+        AzureClientId = configuration["AZURE_CLIENT_ID"];
+        TradeApiEmvironment = configuration["TRADE_API_ENVIRONMENT"];
         TradeApiUri = $"https://{TradeApiEmvironment}-gateway.trade.azure.defra.cloud";
-        TdmBackendApiUri = System.Environment.GetEnvironmentVariable("TDM_BACKEND_API_URI");
-        DmpBusNamespace = $"{System.Environment.GetEnvironmentVariable("DMP_SERVICE_BUS_NAME")!}.servicebus.windows.net";
+        TdmBackendApiUri = configuration["TDM_BACKEND_API_URI"];
+        DmpBusNamespace = $"{configuration["DMP_SERVICE_BUS_NAME"]!}.servicebus.windows.net";
         DmpBusTopic = $"defra.trade.dmp.ingestipaffs.{DmpEnvironment}.{dmpSlot}.topic";
         DmpBusSubscription = $"defra.trade.dmp.{DmpEnvironment}.{dmpSlot}.subscription";
-        DmpBlobUri = $"https://{System.Environment.GetEnvironmentVariable("DMP_BLOB_STORAGE_NAME")!}.blob.core.windows.net";
+        DmpBlobUri = $"https://{configuration["DMP_BLOB_STORAGE_NAME"]!}.blob.core.windows.net";
         DmpBlobContainer = $"dmp-data-{dmpSlot}";
     }
 }

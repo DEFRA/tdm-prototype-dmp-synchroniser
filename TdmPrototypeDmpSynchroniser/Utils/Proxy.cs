@@ -28,9 +28,9 @@ public static class Proxy
      *  2. Use the IHttpClientFactory to create a named instance of HttpClient:
      *     `clientFactory.CreateClient(Proxy.ProxyClient);`
      */
-    public static void AddHttpProxyServices(this IServiceCollection services, Logger logger)
+    public static void AddHttpProxyServices(this IServiceCollection services, Logger logger, IConfigurationManager configuration)
     {
-        var proxyUri = Environment.GetEnvironmentVariable("CDP_HTTPS_PROXY");
+        var proxyUri = configuration["CDP_HTTPS_PROXY"];
         var proxy = new WebProxy
         {
             BypassProxyOnLocal = true
@@ -38,7 +38,7 @@ public static class Proxy
         
         if (proxyUri != null)
         {
-            logger.Information("Creating proxy http client");
+            logger.Information($"Creating {ProxyClient} proxy http client");
             var uri = new UriBuilder(proxyUri);
 
             var credentials = GetCredentialsFromUri(uri);
@@ -52,6 +52,8 @@ public static class Proxy
             uri.UserName = "";
             uri.Password = "";
             proxy.Address = uri.Uri;
+            
+            logger.Information($"Proxy http client {ProxyClient} created connected to {uri.Uri}");
         }
         else
         {

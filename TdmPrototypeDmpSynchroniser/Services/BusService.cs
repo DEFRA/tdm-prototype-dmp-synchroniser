@@ -11,14 +11,14 @@ namespace TdmPrototypeDmpSynchroniser.Services;
 
 public class BusService(
     ILoggerFactory loggerFactory,
-    EnvironmentVariables environmentVariables,
-    Proxy.IProxyConfig proxyConfig) : AzureService(loggerFactory, environmentVariables), IBusService
+    SynchroniserConfig config,
+    Proxy.IProxyConfig proxyConfig) : AzureService(loggerFactory, config), IBusService
 {
 
     private ServiceBusClient CreateBusClient(int retries = 1, int timeout = 10)
     {
         Logger.LogInformation(
-            $"Connecting to bus {EnvironmentVariables.DmpBusNamespace} : {EnvironmentVariables.DmpBusTopic}/{EnvironmentVariables.DmpBusSubscription}");
+            $"Connecting to bus {Config.DmpBusNamespace} : {Config.DmpBusTopic}/{Config.DmpBusSubscription}");
 
         var clientOptions = new ServiceBusClientOptions()
         {
@@ -35,7 +35,7 @@ public class BusService(
         };
         
         return new ServiceBusClient(
-            EnvironmentVariables.DmpBusNamespace,
+            Config.DmpBusNamespace,
             Credentials,
             clientOptions);
     }
@@ -44,7 +44,7 @@ public class BusService(
         var client = CreateBusClient(0, 5);
 
         var processor =
-            client.CreateReceiver(EnvironmentVariables.DmpBusTopic, EnvironmentVariables.DmpBusSubscription);
+            client.CreateReceiver(Config.DmpBusTopic, Config.DmpBusSubscription);
 
         try
         {

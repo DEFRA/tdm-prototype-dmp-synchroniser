@@ -7,8 +7,8 @@ using TdmPrototypeDmpSynchroniser.Models;
 
 namespace TdmPrototypeDmpSynchroniser.Services;
 
-public class BlobService(ILoggerFactory loggerFactory, EnvironmentVariables environmentVariables, IHttpClientFactory clientFactory)
-    : AzureService(loggerFactory, environmentVariables, clientFactory), IBlobService
+public class BlobService(ILoggerFactory loggerFactory, SynchroniserConfig config, IHttpClientFactory clientFactory)
+    : AzureService(loggerFactory, config, clientFactory), IBlobService
 {
     private BlobContainerClient CreateBlobClient(int retries = 1, int timeout = 10)
     {
@@ -27,18 +27,18 @@ public class BlobService(ILoggerFactory loggerFactory, EnvironmentVariables envi
         };
         
         var blobServiceClient = new BlobServiceClient(
-            new Uri(EnvironmentVariables.DmpBlobUri),
+            new Uri(Config.DmpBlobUri),
             Credentials,
             options);
 
-        var containerClient = blobServiceClient.GetBlobContainerClient(EnvironmentVariables.DmpBlobContainer);
+        var containerClient = blobServiceClient.GetBlobContainerClient(Config.DmpBlobContainer);
         
         return containerClient;
     }
     public async Task<Status> CheckBlobAsync()
     {
-        Logger.LogInformation("Connecting to blob storage {0} : {1}", EnvironmentVariables.DmpBlobUri,
-            EnvironmentVariables.DmpBlobContainer);
+        Logger.LogInformation("Connecting to blob storage {0} : {1}", Config.DmpBlobUri,
+            Config.DmpBlobContainer);
         try
         {
             var containerClient = CreateBlobClient(0, 5);
@@ -68,8 +68,8 @@ public class BlobService(ILoggerFactory loggerFactory, EnvironmentVariables envi
 
     public async Task<IEnumerable<BlobItem>> GetResourcesAsync(string prefix)
     {
-        Logger.LogInformation("Connecting to blob storage {0} : {1}", EnvironmentVariables.DmpBlobUri,
-            EnvironmentVariables.DmpBlobContainer);
+        Logger.LogInformation("Connecting to blob storage {0} : {1}", Config.DmpBlobUri,
+            Config.DmpBlobContainer);
         try
         {
             var containerClient = CreateBlobClient();
@@ -100,7 +100,7 @@ public class BlobService(ILoggerFactory loggerFactory, EnvironmentVariables envi
     public async Task<BlobDownloadResult> GetBlobAsync(string path)
     {
         Logger.LogInformation(
-            $"Downloading blob {path} from blob storage {EnvironmentVariables.DmpBlobUri} : {EnvironmentVariables.DmpBlobContainer}");
+            $"Downloading blob {path} from blob storage {Config.DmpBlobUri} : {Config.DmpBlobContainer}");
         try
         {
             var containerClient = CreateBlobClient();

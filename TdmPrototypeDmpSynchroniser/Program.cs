@@ -11,6 +11,8 @@ using TdmPrototypeDmpSynchroniser.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration.AddIniFile("Properties/local.env", true);
+// builder.Configuration.AddJsonFile()
 // Grab environment variables
 builder.Configuration.AddEnvironmentVariables("CDP");
 builder.Configuration.AddEnvironmentVariables();
@@ -34,7 +36,7 @@ builder.Services.AddSingleton<IMongoDbClientFactory>(_ =>
         builder.Configuration.GetValue<string>("Mongo:DatabaseName")!));
 
 // our services
-builder.Services.AddSingleton<EnvironmentVariables, EnvironmentVariables>();
+builder.Services.AddSingleton<SynchroniserConfig, SynchroniserConfig>();
 builder.Services.AddSingleton<IBlobService, BlobService>();
 builder.Services.AddSingleton<IBusService, BusService>();
 builder.Services.AddSingleton<IWebService, WebService>();
@@ -46,7 +48,7 @@ builder.Services.AddHealthChecks();
 
 // http client
 builder.Services.AddHttpClient();
-builder.Services.AddHttpProxyServices(logger);
+builder.Services.AddHttpProxyServices(logger, builder.Configuration);
 
 // swagger endpoints
 if (builder.IsSwaggerEnabled())
