@@ -10,15 +10,15 @@ namespace TdmPrototypeDmpSynchroniser.Services;
 public class BlobService(ILoggerFactory loggerFactory, EnvironmentVariables environmentVariables, IHttpClientFactory clientFactory)
     : AzureService(loggerFactory, environmentVariables, clientFactory), IBlobService
 {
-    private BlobContainerClient CreateBlobClient()
+    private BlobContainerClient CreateBlobClient(int retries = 1, int timeout = 10)
     {
         var options = new BlobClientOptions
         {
             Transport = Transport!,
             Retry =
             {
-                MaxRetries = 1,
-                NetworkTimeout = TimeSpan.FromSeconds(10)
+                MaxRetries = retries,
+                NetworkTimeout = TimeSpan.FromSeconds(timeout)
             },
             Diagnostics = 
             {
@@ -32,7 +32,7 @@ public class BlobService(ILoggerFactory loggerFactory, EnvironmentVariables envi
             options);
 
         var containerClient = blobServiceClient.GetBlobContainerClient(EnvironmentVariables.DmpBlobContainer);
-        // containerClient
+        
         return containerClient;
     }
     public async Task<Status> CheckBlobAsync()
@@ -41,7 +41,7 @@ public class BlobService(ILoggerFactory loggerFactory, EnvironmentVariables envi
             EnvironmentVariables.DmpBlobContainer);
         try
         {
-            var containerClient = CreateBlobClient();
+            var containerClient = CreateBlobClient(0, 5);
             
             Logger.LogInformation("Getting blob folders...");
             var folders = containerClient.GetBlobsByHierarchyAsync(prefix: "RAW/", delimiter: "/");
@@ -76,14 +76,7 @@ public class BlobService(ILoggerFactory loggerFactory, EnvironmentVariables envi
 
             Logger.LogInformation("Getting blob files from {0}...", prefix);
             var itemCount = 0;
-            // var folders = containerClient.GetBlobsByHierarchyAsync(prefix: prefix, delimiter: "/");
-            //
-            // await foreach (BlobHierarchyItem blobItem in folders)
-            // {
-            //     Console.WriteLine("\t" + blobItem.Prefix);
-            //     itemCount++;
-            // }
-
+            
             var files = containerClient.GetBlobsAsync(prefix: prefix);
             var output = new List<BlobItem>();
             
@@ -95,7 +88,29 @@ public class BlobService(ILoggerFactory loggerFactory, EnvironmentVariables envi
             }
 
             return output;
-            // return new Status() { Success = true, Description = String.Format("Done. {0} items synchronised", itemCount) };
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex.ToString());
+            throw;
+        }
+
+    }
+    
+    public async Task<BlobDownloadResult> GetBlobAsync(string path)
+    {
+        Logger.LogInformation(
+            $"Downloading blob {path} from blob storage {EnvironmentVariables.DmpBlobUri} : {EnvironmentVariables.DmpBlobContainer}");
+        try
+        {
+            var containerClient = CreateBlobClient();
+
+            var blobClient = containerClient.GetBlobClient(path);
+
+            var content = await blobClient.DownloadContentAsync();
+            
+            // content.Value.Content.
+            return content.Value;
         }
         catch (Exception ex)
         {

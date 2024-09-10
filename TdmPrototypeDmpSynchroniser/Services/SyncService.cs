@@ -1,7 +1,10 @@
 ﻿
 
 using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Nodes;
+using Azure;
 using Azure.Storage.Blobs.Models;
+using MongoDB.Driver.Linq;
 using TdmPrototypeBackend.Types;
 using TdmPrototypeDmpSynchroniser.Config;
 using TdmPrototypeDmpSynchroniser.Models;
@@ -20,10 +23,18 @@ public class SyncService(ILoggerFactory loggerFactory, EnvironmentVariables envi
             var result = await blobService.GetResourcesAsync("RAW/ALVS/");
             
             var itemCount = 0;
-            foreach (BlobItem item in result)
+            foreach (BlobItem item in result.Take(5))
             {
-                dmpService.UpsertMovement(ConvertMovement(item));
-                itemCount++;
+                if (item.Properties.ContentLength is 0)
+                {
+                    Console.WriteLine($"{item.Name} is a virtual folder.");
+                }
+                else
+                {
+                    dmpService.UpsertMovement(await ConvertMovement(item));
+                    itemCount++;
+                }
+
             }
             
             return new Status()
@@ -38,8 +49,16 @@ public class SyncService(ILoggerFactory loggerFactory, EnvironmentVariables envi
         }
     }
 
-    private Movement ConvertMovement(BlobItem item)
+    private async Task<Movement> ConvertMovement(BlobItem item)
     {
-        return new Movement() { Id = "" };
+        var blob = await blobService.GetBlobAsync(item.Name);
+        
+        Logger.LogInformation(blob.Content.ToString());
+        // var json = JsonObject.Parse(blob.Content.ToDynamicFromJson());
+        var json = blob.Content.ToDynamicFromJson();
+        // Logger.LogInformation(json);
+        
+        return new Movement() { Id = "" };;
     }
+
 }

@@ -14,7 +14,8 @@ public class BusService(
     EnvironmentVariables environmentVariables,
     Proxy.IProxyConfig proxyConfig) : AzureService(loggerFactory, environmentVariables), IBusService
 {
-    public async Task<Status> CheckBusAsync()
+
+    private ServiceBusClient CreateBusClient(int retries = 1, int timeout = 10)
     {
         Logger.LogInformation(
             $"Connecting to bus {EnvironmentVariables.DmpBusNamespace} : {EnvironmentVariables.DmpBusTopic}/{EnvironmentVariables.DmpBusSubscription}");
@@ -25,7 +26,7 @@ public class BusService(
             TransportType = ServiceBusTransportType.AmqpWebSockets,
             RetryOptions = new ServiceBusRetryOptions
             {
-                TryTimeout = TimeSpan.FromSeconds(10), MaxRetries = 1
+                TryTimeout = TimeSpan.FromSeconds(10), MaxRetries = 0
             },
             // Diagnostics = 
             // {
@@ -33,10 +34,14 @@ public class BusService(
             // }
         };
         
-        var client = new ServiceBusClient(
+        return new ServiceBusClient(
             EnvironmentVariables.DmpBusNamespace,
             Credentials,
             clientOptions);
+    }
+    public async Task<Status> CheckBusAsync()
+    {
+        var client = CreateBusClient(0, 5);
 
         var processor =
             client.CreateReceiver(EnvironmentVariables.DmpBusTopic, EnvironmentVariables.DmpBusSubscription);

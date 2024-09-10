@@ -7,5 +7,6 @@ public interface IBlobService
 {
     public Task<Status> CheckBlobAsync();
     public Task<IEnumerable<BlobItem>> GetResourcesAsync(string prefix);
+    public Task<BlobDownloadResult> GetBlobAsync(string path);
     
 }
